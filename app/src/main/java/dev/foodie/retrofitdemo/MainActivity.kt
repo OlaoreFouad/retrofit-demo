@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 val psts = response.body()
+                // Looping through each of the posts
                 psts?.forEach {
                     text_view_result.append(
                         "Id: ${ it.id }\nUser ID: ${ it.userId }\nTitle: ${ it.title }\nContent: ${ it.text }"
