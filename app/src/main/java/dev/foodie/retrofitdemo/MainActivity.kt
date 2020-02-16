@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
                     text_view_result.append(
                         "Id: ${ it.id }\nUser ID: ${ it.userId }\nTitle: ${ it.title }\nContent: ${ it.text }"
                     )
-                    text_view_result.append("\n\n")
+                    text_view_result.append("\n")
                 }
             }
         })
