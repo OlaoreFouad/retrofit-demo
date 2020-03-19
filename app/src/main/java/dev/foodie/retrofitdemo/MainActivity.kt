@@ -11,6 +11,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.StringBuilder
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,7 +29,9 @@ class MainActivity : AppCompatActivity() {
         jsonService = retrofit.create(JsonService::class.java)
 
         //getPosts()
-        getCommentsForUser(3)
+        //getCommentsForUser(3)
+//        getPost()
+        createPost()
     }
 
     private fun getPosts() {
@@ -85,6 +88,44 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+    }
+
+    private fun getPost() {
+
+        jsonService.getPost(1).enqueue(object : Callback<Post> {
+            override fun onFailure(call: Call<Post>, t: Throwable) {
+                text_view_result.text = t.message
+            }
+
+            override fun onResponse(call: Call<Post>, response: Response<Post>) {
+                if (!response.isSuccessful) {
+                    text_view_result.text = "Code: ${ response.code() }"
+                    return
+                }
+
+                val post: Post = response.body()!!
+                text_view_result.text = post.toString()
+            }
+        })
+
+    }
+
+    private fun createPost() {
+        val post = Post(title = "Fouad's Title", text = "This is some very random text!", userId = 45)
+        jsonService.createPost(mapOf("id" to "22", "userId" to "11", "title" to post.title, "body" to post.text)).enqueue(object : Callback<Post> {
+            override fun onFailure(call: Call<Post>, t: Throwable) {
+                text_view_result.text = "Message: ${ t.message }"
+            }
+
+            override fun onResponse(call: Call<Post>, response: Response<Post>) {
+                if (!response.isSuccessful) {
+                    text_view_result.text = "Code: ${ response.code() }"
+                }
+
+                val p = response.body()
+                text_view_result.text = p.toString()
+            }
+        })
     }
 
 }
