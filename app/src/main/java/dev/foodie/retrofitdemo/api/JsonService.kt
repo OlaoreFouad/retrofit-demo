@@ -33,4 +33,16 @@ interface JsonService {
         @FieldMap fieldMap: Map<String, String>
     ): Call<Post>
 
+    @PUT("posts/{id}")
+    fun putPost(@Path("id") id: Int, @Body post: Post): Call<Post>
+
+    @FormUrlEncoded
+    @PATCH("posts/{id}")
+    fun patchPost(@Path("id") id: Int, @FieldMap map: Map<String, String>): Call<Post>
+
+    @DELETE("posts/{id}")
+    fun deletePost(
+        @Path("id") id: Int
+    ): Call<Void>
+
 }

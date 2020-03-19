@@ -31,7 +31,10 @@ class MainActivity : AppCompatActivity() {
         //getPosts()
         //getCommentsForUser(3)
 //        getPost()
-        createPost()
+        //createPost()
+        //putPost()
+        //patchPost("Fooo", "Barrrr")
+        deletePost(7)
     }
 
     private fun getPosts() {
@@ -124,6 +127,57 @@ class MainActivity : AppCompatActivity() {
 
                 val p = response.body()
                 text_view_result.text = p.toString()
+            }
+        })
+    }
+
+    private fun putPost() {
+        val post = Post(3, 5, "This is a new title for id 5", "Text to follow through!")
+        jsonService.putPost(3, post).enqueue(object : Callback<Post> {
+            override fun onFailure(call: Call<Post>, t: Throwable) {
+                text_view_result.text = t.message
+            }
+
+            override fun onResponse(call: Call<Post>, response: Response<Post>) {
+                if (!response.isSuccessful) {
+                    text_view_result.text = "Code: ${ response.code() }"
+                    return
+                }
+
+                text_view_result.text = response.body().toString()
+
+            }
+        })
+    }
+
+    private fun patchPost(title: String, text: String, userId: Int = 5) {
+        jsonService.patchPost(9, mapOf(
+            "title" to title, "body" to text, "userId" to "$userId"
+        )).enqueue(object : Callback<Post> {
+            override fun onFailure(call: Call<Post>, t: Throwable) {
+                text_view_result.text = t.message
+            }
+
+            override fun onResponse(call: Call<Post>, response: Response<Post>) {
+                if (!response.isSuccessful) {
+                    text_view_result.text = "Code: ${ response.code() }"
+                    return
+                }
+
+                text_view_result.text = response.body().toString()
+
+            }
+        })
+    }
+
+    private fun deletePost(id: Int) {
+        jsonService.deletePost(id).enqueue(object : Callback<Void> {
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                text_view_result.text = t.message
+            }
+
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                text_view_result.text = "Code: ${ response.code() }"
             }
         })
     }
