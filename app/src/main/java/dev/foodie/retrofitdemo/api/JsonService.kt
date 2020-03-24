@@ -33,8 +33,12 @@ interface JsonService {
         @FieldMap fieldMap: Map<String, String>
     ): Call<Post>
 
+    @Headers(
+        "Fake-header1: fake_value",
+        "Fake-header2: fake_value"
+    )
     @PUT("posts/{id}")
-    fun putPost(@Path("id") id: Int, @Body post: Post): Call<Post>
+    fun putPost(@Header("Authorization") token: String,  @Path("id") id: Int, @Body post: Post): Call<Post>
 
     @FormUrlEncoded
     @PATCH("posts/{id}")

@@ -2,10 +2,13 @@ package dev.foodie.retrofitdemo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.google.gson.GsonBuilder
 import dev.foodie.retrofitdemo.api.JsonService
 import dev.foodie.retrofitdemo.models.Comment
 import dev.foodie.retrofitdemo.models.Post
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,9 +24,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        /**
+         * A logging interceptor is a program that intercepts requests sent by the client and responses, and logs them for developers to see.
+         * How To?
+         * 1. Get the okhttp logging interceptor dependency
+         * 2. Initialize an object pointing to the logging interceptor
+         * 3. Create an okttp client, and add the logging interceptor to it to enable logging.
+         * 4. Register the client to the retrofit instance to add it. Retrofit uses Ok-http in the background.
+         * */
+
+        val gson = GsonBuilder().serializeNulls().create()
+
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            .build()
+
         val retrofit = Retrofit.Builder()
             .baseUrl("https://jsonplaceholder.typicode.com/")
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(okHttpClient)
             .build()
 
         jsonService = retrofit.create(JsonService::class.java)
@@ -32,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         //getCommentsForUser(3)
 //        getPost()
         //createPost()
-        //putPost()
+        putPost()
         //patchPost("Fooo", "Barrrr")
         deletePost(7)
     }
@@ -133,7 +154,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun putPost() {
         val post = Post(3, 5, "This is a new title for id 5", "Text to follow through!")
-        jsonService.putPost(3, post).enqueue(object : Callback<Post> {
+        jsonService.putPost("token being passed in!",3, post).enqueue(object : Callback<Post> {
             override fun onFailure(call: Call<Post>, t: Throwable) {
                 text_view_result.text = t.message
             }
