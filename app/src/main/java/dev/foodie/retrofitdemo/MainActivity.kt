@@ -7,6 +7,7 @@ import dev.foodie.retrofitdemo.api.JsonService
 import dev.foodie.retrofitdemo.models.Comment
 import dev.foodie.retrofitdemo.models.Post
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -38,6 +39,17 @@ class MainActivity : AppCompatActivity() {
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(object : Interceptor {
+                override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+                    val incomingRequest = chain.request()
+
+                    val outgoingRequest = incomingRequest.newBuilder()
+                        .header("LoggingInterceptor", "LoggingInterceptorValue")
+                        .build()
+
+                    return chain.proceed(outgoingRequest)
+                }
+            })
             .addInterceptor(interceptor)
             .build()
 
